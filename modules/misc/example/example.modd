@@ -8,6 +8,7 @@
   "PreBuild": {},
   "Build": "cargo build",
   "Output": {
+    "Linux": "./target/debug/libexample.so",
     "Macos": "./target/debug/libexample.dylib.dSYM/Contents/Resources/DWARF/libexample.dylib"
   }
 }
