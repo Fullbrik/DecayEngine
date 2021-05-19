@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "TMToiPRgI/ws98osaWLyGvWbJB2UFtUi8ghhnALcw70JmWXnUyfyS715qTv5OTF1kkTysdMoNg7Np8XezdIr0w==",
+  "success": true,
+  "projectFilePath": "/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/DecayBuildTool.csproj",
+  "expectedPackageFiles": [
+    "/Users/tuviafrankel/.nuget/packages/commandlineparser/2.8.0/commandlineparser.2.8.0.nupkg.sha512",
+    "/Users/tuviafrankel/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

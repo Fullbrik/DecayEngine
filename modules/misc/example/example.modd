@@ -1,0 +1,13 @@
+{
+  "Name": "Example",
+  "Folders": {
+    "src": "./src",
+    "content": "./content",
+    "build": "./.build"
+  },
+  "PreBuild": {},
+  "Build": "cargo build",
+  "Output": {
+    "Macos": "./target/debug/libexample.dylib.dSYM/Contents/Resources/DWARF/libexample.dylib"
+  }
+}

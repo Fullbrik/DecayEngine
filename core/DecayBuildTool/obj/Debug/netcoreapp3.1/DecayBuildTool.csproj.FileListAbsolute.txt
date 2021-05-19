@@ -1,0 +1,15 @@
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.csprojAssemblyReference.cache
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.AssemblyInfoInputs.cache
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.AssemblyInfo.cs
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.csproj.CoreCompileInputs.cache
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/DecayBuildTool.deps.json
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/DecayBuildTool.runtimeconfig.json
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/DecayBuildTool.runtimeconfig.dev.json
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/DecayBuildTool.dll
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/DecayBuildTool.pdb
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/CommandLine.dll
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/bin/Debug/netcoreapp3.1/Newtonsoft.Json.dll
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.csproj.CopyComplete
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.dll
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.pdb
+/Users/tuviafrankel/Documents/GitHub/DecayEngine/core/DecayBuildTool/obj/Debug/netcoreapp3.1/DecayBuildTool.genruntimeconfig.cache
