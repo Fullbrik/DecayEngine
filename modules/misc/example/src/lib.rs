@@ -1,14 +1,14 @@
-const PLUGIN_NAME: &str = "Example";
+const MODULE_NAME: &str = "Example";
 
-// Occurs when the plugin gets loaded in to the engine
-pub fn plugin_on_load() {
-    println!("Plugin {} loaded", PLUGIN_NAME);
+// Occurs when the module gets loaded in to the engine
+pub fn module_on_load() {
+    println!("module {} loaded", MODULE_NAME);
 }
-// Occurs when the plugin gets initialized. This will always happen after all initial plugins are loaded
-pub fn plugin_on_init() {
-    println!("Plugin {} initialized", PLUGIN_NAME);
+// Occurs when the module gets initialized. This will always happen after all initial modules are loaded
+pub fn module_on_init() {
+    println!("module {} initialized", MODULE_NAME);
 }
-// Occurs when the plugin gets unloaded
-pub fn plugin_on_unload() {
-    println!("Plugin {} unloaded", PLUGIN_NAME);
+// Occurs when the module gets unloaded
+pub fn module_on_unload() {
+    println!("module {} unloaded", MODULE_NAME);
 }
