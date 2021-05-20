@@ -9,4 +9,5 @@ edition = "2018"
 [dependencies]
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+name="example"
+crate-type = ["dylib"]

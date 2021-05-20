@@ -4,6 +4,7 @@ use module::ModuleManager;
 use clap::{App, Arg};
 
 fn main() {
+    //Parse the console parameters
     let matches = App::new("Decay Engine")
         .version("0.0.1")
         .author("Mcp613")
@@ -17,6 +18,14 @@ fn main() {
         )
         .get_matches();
 
-    let mut mm = ModuleManager::new();
-    mm.load_file(matches.value_of("module").expect("Please supply a module"));
+    //Create the Module manager
+    let mut manager = ModuleManager::new();
+    //And add all our paths from the module.json file and load it. Make sure you added the $DECAY environment variable
+    manager.add_modules_from_json(include_str!("../modules.json"), true);
+
+    //We've loaded all our initial modules, so we call this
+    manager.complete_load_initial_modules();
+
+    //Unload everything when we're done
+    manager.unload_all();
 }

@@ -3,12 +3,12 @@
   "Folders": {
     "src": "./src",
     "content": "./content",
-    "build": "./.build"
+    "build": ".build"
   },
   "PreBuild": {},
   "Build": "cargo build",
   "Output": {
     "Linux": "./target/debug/libexample.so",
-    "Macos": "./target/debug/libexample.dylib.dSYM/Contents/Resources/DWARF/libexample.dylib"
+    "Macos": "./target/debug/libexample.dylib"
   }
 }

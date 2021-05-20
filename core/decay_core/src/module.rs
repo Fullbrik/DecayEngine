@@ -1,3 +1,4 @@
+//We start off by defining the platform dependent library names
 #[cfg(target_os = "linux")]
 const LIB_NAME: &str = "libmodule.so";
 
@@ -7,20 +8,29 @@ const LIB_NAME: &str = "libmodule.dylib";
 #[cfg(target_os = "windows")]
 const LIB_NAME: &str = "Module.dll";
 
+//And then importing everything
 extern crate libloading as lib;
-
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 pub struct Module {
-    on_load: lib::Symbol<fn()>,
+    #[allow(dead_code)]
+    name: String, //The name of the module
+
+    #[allow(dead_code)] //This might help with lifetime stuff so I'm leaving it in
+    library: lib::Library,
+    on_load: Box<dyn Fn()>,   //Called when we load the module
+    on_init: Box<dyn Fn()>,   //Called after all initial modules are initialized
+    on_unload: Box<dyn Fn()>, //Called when we unload the module
 }
 
 impl Module {
-    fn new(lib_path: PathBuf) -> Module {
+    fn new(name: String, lib_path: PathBuf) -> Module {
         unsafe {
+            //Unsafe because we are loading stuff from libraries potentially written in C.
             let library = lib::Library::new(lib_path.as_os_str()).expect(
                 format!(
                     "Failed top load module library: {}",
@@ -31,42 +41,104 @@ impl Module {
                 .as_str(),
             );
 
-            let on_load: lib::Symbol<unsafe extern "C" fn()> = library
-                .get(b"module_on_load")
-                .expect("Failed to get function module_on_load");
+            //Get all of our module's functions
+            //Check the comments on the Module struct for what these functions do
+            let on_load = library
+                .get::<unsafe extern "C" fn()>(b"module_on_load")
+                .expect("Failed to get function module_on_load")
+                .into_raw();
 
-            let on_init: lib::Symbol<unsafe extern "C" fn()> = library
-                .get(b"module_on_init")
-                .expect("Failed to get function module_on_init");
+            let on_init = library
+                .get::<unsafe extern "C" fn()>(b"module_on_init")
+                .expect("Failed to get function module_on_init")
+                .into_raw();
 
-            let on_unload: lib::Symbol<unsafe extern "C" fn()> = library
-                .get(b"module_on_unload")
-                .expect("Failed to get function module_on_unload");
+            let on_unload = library
+                .get::<unsafe extern "C" fn()>(b"module_on_unload")
+                .expect("Failed to get function module_on_unload")
+                .into_raw();
 
-            return Module { on_load: on_load };
+            //Return back the module
+            return Module {
+                name: name,
+                library: library,
+                on_load: Box::new(move || on_load()),
+                on_init: Box::new(move || on_init()),
+                on_unload: Box::new(move || on_unload()),
+            };
         }
     }
 }
 
 pub struct ModuleManager {
-    modules: Vec<Module>,
+    module_paths: HashMap<String, String>, //All of the paths to different modules. This is so we can load a module from its name
+    modules: HashMap<String, Module>,      //All of the loaded modules
+
+    can_init: bool, //If all initial modules are loaded, we can init a module right after we load it
 }
 
 impl ModuleManager {
     pub fn new() -> ModuleManager {
         ModuleManager {
-            modules: Vec::new(),
+            module_paths: HashMap::new(),
+            modules: HashMap::new(),
+            can_init: false,
         }
     }
 
-    pub fn load_file(&mut self, file: &str) {
-        println!("Loading module file: {}", file);
+    pub fn add_modules_from_json(&mut self, json: &str, load_any: bool) {
+        //Parse the json
+        let value: serde_json::Value = serde_json::from_str(
+            //Replace the DECAY environment variable
+            json.replace(
+                "$DECAY",
+                std::env::var("DECAY")
+                    .expect("No decay environment variable")
+                    .as_str(),
+            )
+            .as_str(),
+        )
+        .expect("Parsing module json has errors");
 
-        let mut f = File::open(file).expect("File not found");
+        //Get all the paths
+        let paths = value
+            .get("paths")
+            .expect("Couldn't find any paths to load modules from");
+
+        //Go through each path and add it to the map
+        for (n, p) in paths.as_object().unwrap() {
+            self.add_to_paths(n.to_string(), p.as_str().unwrap().to_string());
+        }
+
+        //If we should load modules that the JSON asks us to, we do so
+        if load_any {
+            let loaded = value
+                .get("loaded")
+                .expect("Couldn't find any modules to load at start");
+            for module in loaded.as_array().unwrap() {
+                self.load(module.as_str().unwrap().to_string());
+            }
+        }
+    }
+
+    pub fn add_to_paths(&mut self, name: String, path: String) {
+        self.module_paths.insert(name, path); //Add a module to the path list
+    }
+
+    pub fn load(&mut self, name: String) {
+        let path = self.module_paths.get(&name).unwrap().clone(); //Get the module's path from its name
+        self.load_file(path.as_str()); // and load it
+    }
+
+    fn load_file(&mut self, file: &str) {
+        println!("Loading module file: {}...", file);
+
+        let mut f = File::open(file).expect("File not found"); //Open the module's config (.dmod) file
         let mut text = String::new();
 
-        f.read_to_string(&mut text).expect("Unable to read file");
+        f.read_to_string(&mut text).expect("Unable to read file"); //and read the text
 
+        //Get the folder the config file
         let path = Path::new(file);
         let mut directory: &str = "";
         if !path.is_dir() {
@@ -77,27 +149,75 @@ impl ModuleManager {
                 .expect("Could not make path a str");
         }
 
+        //load the module
         self.load_json(text.as_str(), directory);
     }
 
-    pub fn load_json(&mut self, json: &str, directory: &str) {
-        let value: serde_json::Value = serde_json::from_str(json).expect("Could not parse to json");
+    fn load_json(&mut self, json: &str, directory: &str) {
+        let value: serde_json::Value = serde_json::from_str(json).expect("Could not parse to json"); //Parse the json
 
-        println!("Loading module: {}", value["Name"]);
-
-        let buildFolder = value["Folders"]["build"]
+        let name = value["Name"]
             .as_str()
-            .expect("Build folder was not a string");
+            .expect("Attempted to load module with no name")
+            .to_string(); //Get the module's name
 
+        println!("Loading module: {}...", name);
+
+        let build_folder = value["Folders"]["build"]
+            .as_str()
+            .expect("Build folder was not a string"); //Get the build folder
+
+        //Get the actual module library itself
         let mut lib_path = PathBuf::from_str(directory).expect("Error creating path buffer");
-        lib_path.push(Path::new(buildFolder));
+        lib_path.push(Path::new(build_folder));
         lib_path.push(Path::new(LIB_NAME));
 
-        unsafe {
-            let module = Module::new(lib_path);
-            self.modules.push(module);
+        //Load the module and call on_load (Remember how I said it gets called here. Thats because I wrote the comments Kevin. You can't complain about my code anymore because there are comments in it.)
+        let module = Module::new(name.clone(), lib_path);
+        self.modules.insert(name.clone(), module);
+        (*self.modules.get(&name).unwrap().on_load)();
+
+        //If all other modules are init-ed, init this one
+        if self.can_init {
+            (*self.modules.get(&name).unwrap().on_init)();
         }
 
-        println!("Loaded module: {}", value["Name"]);
+        println!("Loaded module: {}", name);
+    }
+
+    pub fn complete_load_initial_modules(&mut self) {
+        //If we haven't already ini-ed the other modules
+        if !self.can_init {
+            println!("Initializing modules...");
+
+            //We do this first because it makes me feel happy
+            self.can_init = true;
+
+            //Init all the modules
+            for module in self.modules.values() {
+                (*module.on_init)();
+            }
+
+            println!("Initialized modules");
+        }
+    }
+
+    pub fn unload(&mut self, name: String) {
+        //Get the module
+        let module = &self.modules[&name];
+        //Call on_unload
+        (*(module.on_unload))();
+        //And remove it from the list
+        self.modules.remove(&name);
+    }
+
+    pub fn unload_all(&mut self) {
+        //Unload all the modules
+        for module in self.modules.values() {
+            (*module.on_unload)();
+        }
+
+        //And remove them from the list
+        self.modules.clear();
     }
 }

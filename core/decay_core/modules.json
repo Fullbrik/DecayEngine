@@ -1,0 +1,9 @@
+{
+  "paths": {
+    "Example": "$DECAY/modules/misc/example/example.dmod"
+  },
+  "loaded": ["Example"],
+  "categories": {
+    "misc": ["Example"]
+  }
+}
