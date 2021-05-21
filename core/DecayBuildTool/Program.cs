@@ -12,7 +12,11 @@ namespace DecayBuildTool
         {
             Parser.Default.ParseArguments<Options>(args).WithParsed(options =>
             {
-                ModuleBuilder.BuildFile(options.File);
+                //If we want to copy headers, copy them
+                if (options.CopyHeaders) HeaderProvider.ProvideHeaders(options.File);
+
+                //If we want to build the module, build it
+                if (options.Build) ModuleBuilder.BuildFile(options.File);
             });
         }
     }

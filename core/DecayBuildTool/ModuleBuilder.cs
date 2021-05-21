@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace DecayBuildTool
 {
-    public class ModuleBuilder
+    public static class ModuleBuilder
     {
         public static PlatformDependantModuleConfig LibName { get; } = new PlatformDependantModuleConfig()
         {
@@ -23,12 +23,13 @@ namespace DecayBuildTool
         public static void BuildFile(string file)
         {
             Console.WriteLine($"Started build on file {file}");
+
+            //If the file has no extension, it prob has a .dmod extension irl
+            if (!Path.HasExtension(file)) file = file + ".dmod";
+
             //Make sure we have a valid file
             if (File.Exists(file))
             {
-                //If the file has no extension, it prob has a .dmod extension irl
-                if (!Path.HasExtension(file)) file = file + ".dmod";
-
                 //Read the file's text and parse it
                 string text = File.ReadAllText(file);
                 ModuleFile dmod = JsonConvert.DeserializeObject<ModuleFile>(text);

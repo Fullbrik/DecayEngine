@@ -1,10 +1,12 @@
 {
   "Name": "Example",
   "Folders": {
-    "src": "./src",
-    "content": "./content",
-    "build": ".build"
+    "src": "src",
+    "content": "content",
+    "build": ".build",
+    "headers": "src/.headers"
   },
+  "Lang": "rust",
   "PreBuild": {},
   "Build": "cargo build",
   "Output": {

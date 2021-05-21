@@ -9,6 +9,7 @@ namespace DecayBuildTool
     {
         public string Name { get; set; }
         public Dictionary<string, string> Folders { get; set; } = new Dictionary<string, string>();
+        public string Lang { get; set; }
         public PlatformDependantModuleConfig PreBuild { get; set; }
         public string Build { get; set; }
         public PlatformDependantModuleConfig Output { get; set; }
