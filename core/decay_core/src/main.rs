@@ -26,6 +26,13 @@ fn main() {
     //We've loaded all our initial modules, so we call this
     manager.complete_load_initial_modules();
 
+    //Quick temporary test to make sure cross-module event pointers can be grabbed and called
+    manager
+        .modules
+        .get("Example")
+        .unwrap()
+        .get_event_ptr("example")();
+
     //Unload everything when we're done
     manager.unload_all();
 }

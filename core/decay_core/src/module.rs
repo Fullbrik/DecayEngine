@@ -11,10 +11,15 @@ const LIB_NAME: &str = "Module.dll";
 //And then importing everything
 extern crate libloading as lib;
 use std::collections::HashMap;
+use std::ffi::CString;
 use std::fs::File;
 use std::io::prelude::*;
+use std::os::raw::c_char;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+
+//This is the signature of the Event Pointers used in cross-module communication
+type EventPtr = unsafe extern "C" fn();
 
 pub struct Module {
     #[allow(dead_code)]
@@ -25,6 +30,7 @@ pub struct Module {
     on_load: Box<dyn Fn()>,   //Called when we load the module
     on_init: Box<dyn Fn()>,   //Called after all initial modules are initialized
     on_unload: Box<dyn Fn()>, //Called when we unload the module
+    get_event_ptr: Box<dyn Fn(*const c_char) -> EventPtr>,
 }
 
 impl Module {
@@ -58,6 +64,13 @@ impl Module {
                 .expect("Failed to get function module_on_unload")
                 .into_raw();
 
+            let get_event_ptr = library
+                .get::<unsafe extern "C" fn(name: *const c_char) -> EventPtr>(
+                    b"module_get_event_ptr",
+                )
+                .expect("Failed to get function module_get_event_ptr")
+                .into_raw();
+
             //Return back the module
             return Module {
                 name: name,
@@ -65,14 +78,25 @@ impl Module {
                 on_load: Box::new(move || on_load()),
                 on_init: Box::new(move || on_init()),
                 on_unload: Box::new(move || on_unload()),
+                get_event_ptr: Box::new(move |name| get_event_ptr(name)),
             };
+        }
+    }
+
+    pub fn get_event_ptr(&self, name: &str) -> impl Fn() {
+        //Get the event function pointer and return it
+        let c_string = CString::new(name).unwrap();
+        let ptr = (*self.get_event_ptr)(c_string.as_ptr());
+        unsafe {
+            //Return a closure because it makes life easier for me. If you can find a better way, pls send a pull request.
+            return move || ptr();
         }
     }
 }
 
 pub struct ModuleManager {
     module_paths: HashMap<String, String>, //All of the paths to different modules. This is so we can load a module from its name
-    modules: HashMap<String, Module>,      //All of the loaded modules
+    pub modules: HashMap<String, Module>,  //All of the loaded modules
 
     can_init: bool, //If all initial modules are loaded, we can init a module right after we load it
 }
