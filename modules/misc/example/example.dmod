@@ -4,7 +4,8 @@
     "src": "src",
     "content": "content",
     "build": ".build",
-    "headers": "src/.headers"
+    "headers": "src/.headers",
+    "generated": ".gen"
   },
   "Lang": "rust",
   "PreBuild": {},

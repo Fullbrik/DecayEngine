@@ -1,11 +1,15 @@
-mod module;
+pub mod module;
+
+//use cross_module::Packet;
 use module::ModuleManager;
 
 use clap::{App, Arg};
 
+use crate::module::cross_module;
+
 fn main() {
     //Parse the console parameters
-    let matches = App::new("Decay Engine")
+    let _matches = App::new("Decay Engine")
         .version("0.0.1")
         .author("Mcp613")
         .arg(
@@ -32,6 +36,11 @@ fn main() {
         .get("Example")
         .unwrap()
         .get_event_ptr("example")();
+
+    let mut packet = cross_module::Packet::new();
+    packet.push_i8(-100);
+    packet.push_u16(1000);
+    manager.modules.get("Example").unwrap().send_packet(packet);
 
     //Unload everything when we're done
     manager.unload_all();

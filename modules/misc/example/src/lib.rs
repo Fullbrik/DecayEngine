@@ -1,7 +1,8 @@
 #[path = ".headers/cross_module.rs"]
 pub mod cross_module;
 
-use std::ffi::CStr;
+use cross_module::Packet;
+use std::{ffi::CStr, mem};
 use std::os::raw::c_char;
 
 const MODULE_NAME: &str = "Example";
@@ -30,7 +31,9 @@ pub extern "C" fn module_get_event_ptr(name: *const c_char) -> extern "C" fn() {
 //Called when we receive a packet from cross-module communication. NOTE: DO NOT MODIFY THIS FUNCTION!! Modify receive_packet instead
 #[no_mangle]
 pub extern "C" fn module_receive_packet(data: *mut u8, size: usize) {
-    receive_packet(cross_module::Packet::from_data(data, size));
+    mem::forget(data);
+    mem::forget(size);
+    receive_packet(Packet::from_data(data, size));
 }
 
 //Export your functions here. Make sure each function is prefaced with 'extern "C"' before the definition
@@ -49,5 +52,10 @@ extern "C" fn example_event() {
     println!("Did example event");
 }
 
-//When we recieve a packet, we call this
-fn receive_packet(packet: cross_module::Packet) {}
+//When we receive a packet, we call this
+fn receive_packet(mut packet: Packet) {
+    println!("{:?}", packet.get_data());
+    let first = packet.pull_i8();
+    let second = packet.pull_u16();
+    println!("{}, {}", first, second);
+}

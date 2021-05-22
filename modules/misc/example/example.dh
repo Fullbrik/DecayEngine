@@ -1,0 +1,24 @@
+{
+    "Functions": [
+        {
+            "Name": ["Send", "Packet"],
+            "Params": {
+                "num1": "i8",
+                "bigger": "bool"
+            },
+            "Contents": [
+                {
+                    "Command": "Send",
+                    "Packet": {
+                        "use-param": "num1",
+                        "use-bool": {
+                            "param": "bigger",
+                            "if": "1000",
+                            "else": "100"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -8,15 +8,20 @@ const LIB_NAME: &str = "libmodule.dylib";
 #[cfg(target_os = "windows")]
 const LIB_NAME: &str = "Module.dll";
 
+//Import any headers
+#[path = ".headers/cross_module.rs"]
+pub mod cross_module;
+
 //And then importing everything
 extern crate libloading as lib;
-use std::collections::HashMap;
+pub use cross_module::Packet;
 use std::ffi::CString;
 use std::fs::File;
 use std::io::prelude::*;
 use std::os::raw::c_char;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+use std::{collections::HashMap, mem};
 
 //This is the signature of the Event Pointers used in cross-module communication
 type EventPtr = unsafe extern "C" fn();
@@ -31,6 +36,7 @@ pub struct Module {
     on_init: Box<dyn Fn()>,   //Called after all initial modules are initialized
     on_unload: Box<dyn Fn()>, //Called when we unload the module
     get_event_ptr: Box<dyn Fn(*const c_char) -> EventPtr>,
+    receive_packet: Box<dyn Fn(*const u8, usize)>,
 }
 
 impl Module {
@@ -71,6 +77,11 @@ impl Module {
                 .expect("Failed to get function module_get_event_ptr")
                 .into_raw();
 
+            let receive_packet = library
+                .get::<unsafe extern "C" fn(data: *const u8, size: usize)>(b"module_receive_packet")
+                .expect("Failed to get function module_receive_packet")
+                .into_raw();
+
             //Return back the module
             return Module {
                 name: name,
@@ -79,6 +90,7 @@ impl Module {
                 on_init: Box::new(move || on_init()),
                 on_unload: Box::new(move || on_unload()),
                 get_event_ptr: Box::new(move |name| get_event_ptr(name)),
+                receive_packet: Box::new(move |data, size| receive_packet(data, size)),
             };
         }
     }
@@ -91,6 +103,16 @@ impl Module {
             //Return a closure because it makes life easier for me. If you can find a better way, pls send a pull request.
             return move || ptr();
         }
+    }
+
+    pub fn send_packet(&self, packet: Packet) {
+        let data = packet.get_data();
+        let size = data.len();
+        let raw_data = data.as_ptr();
+
+        mem::forget(packet.data);
+
+        (*self.receive_packet)(raw_data, size);
     }
 }
 
