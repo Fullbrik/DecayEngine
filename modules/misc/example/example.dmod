@@ -8,6 +8,7 @@
     "generated": ".gen"
   },
   "Lang": "rust",
+  "Header": "example.dh",
   "PreBuild": {},
   "Build": "cargo build",
   "Output": {

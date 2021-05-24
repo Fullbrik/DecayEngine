@@ -1,24 +1,32 @@
 {
-    "Functions": [
-        {
-            "Name": ["Send", "Packet"],
-            "Params": {
-                "num1": "i8",
-                "bigger": "bool"
-            },
-            "Contents": [
-                {
-                    "Command": "Send",
-                    "Packet": {
-                        "use-param": "num1",
-                        "use-bool": {
-                            "param": "bigger",
-                            "if": "1000",
-                            "else": "100"
-                        }
-                    }
-                }
-            ]
-        }
-    ]
+	"Name": "Example",
+	"Functions": [
+		{
+			"Name": [
+				"Send",
+				"Packet"
+			],
+			"Params": {
+				"num1": "i8",
+				"bigger": "bool"
+			},
+			"Contents": [
+				{
+					"Command": "packet",
+					"Packet": [
+						{
+							"Type": "param",
+							"Param": "num1"
+						},
+						{
+							"Type": "if",
+							"Param": "bigger",
+							"If": "1000",
+							"Else": "100"
+						}
+					]
+				}
+			]
+		}
+	]
 }
