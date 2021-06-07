@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace DecayBuildTool
+namespace DecayModuleTool
 {
     public static class HeaderGenerator
     {

@@ -1,5 +1,6 @@
 {
   "Name": "Example",
+  "Category": "Misc",
   "Folders": {
     "src": "src",
     "content": "content",
@@ -14,5 +15,6 @@
   "Output": {
     "Linux": "./target/debug/libexample.so",
     "Macos": "./target/debug/libexample.dylib"
-  }
+  },
+  "Deps": []
 }

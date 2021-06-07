@@ -1,4 +1,4 @@
-namespace DecayBuildTool.Languages.Generators
+namespace DecayModuleTool.Headers.Languages.Generators
 {
     public interface IGenerator
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace DecayBuildTool
+namespace DecayModuleTool
 {
     [Serializable]
     public class ModuleFile
@@ -14,6 +14,7 @@ namespace DecayBuildTool
         public PlatformDependantModuleConfig PreBuild { get; set; }
         public string Build { get; set; }
         public PlatformDependantModuleConfig Output { get; set; }
+        public string Deps { get; set; }
     }
 
     [Serializable]

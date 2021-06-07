@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace DecayBuildTool
+namespace DecayModuleTool.STD
 {
-    public static class HeaderProvider
+    public static class STDProvider
     {
-        public static void ProvideHeaders(string file)
+        public static void ProvideSTD(string file)
         {
-            Console.WriteLine($"Started copying headers for file {file}");
+            Console.WriteLine($"Started copying the standard module libs (STD) for file {file}...");
 
             //If the file has no extension, it prob has a .dmod extension irl
             if (!Path.HasExtension(file)) file = file + ".dmod";
@@ -24,7 +24,7 @@ namespace DecayBuildTool
                 var modulePath = Path.GetDirectoryName(file);
 
                 //Get the directory with headers and the directory to drop them
-                string headerDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Headers", dmod.Lang);
+                string headerDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "STD", dmod.Lang);
                 string moduleHeaderDir = Path.Combine(modulePath, dmod.Folders["headers"]);
 
                 //Make sure we have a directory to drop them in

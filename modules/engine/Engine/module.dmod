@@ -1,0 +1,7 @@
+{
+    "Name": "Engine",
+    "Folders": {
+        "build": ".build"
+    },
+    "Deps": ["Example"]
+}

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DecayBuildTool
+namespace DecayModuleTool
 {
     [Serializable]
     public class HeaderFileData

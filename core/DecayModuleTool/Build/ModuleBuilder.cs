@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace DecayBuildTool
+namespace DecayModuleTool.Build
 {
     public static class ModuleBuilder
     {
