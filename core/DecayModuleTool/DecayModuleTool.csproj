@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup> 
-    <Content Include="STD\STD\*\**"> 
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    <Content Include="STD\*\**"> 
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory> 
     </Content> 
   </ItemGroup>
 

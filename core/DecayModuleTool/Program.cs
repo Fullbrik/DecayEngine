@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using CommandLine;
 
 namespace DecayModuleTool
@@ -11,11 +11,13 @@ namespace DecayModuleTool
             {
                 if (options.GenerateModuleList) ModuleList.ModuleListGenerator.GenerateModuleList(options.Folder);
 
-                // //If we want to copy headers, copy them
-                // if (options.CopyHeaders) STD.STDProvider.ProvideSTD(options.File);
+                ModuleList.ModuleList.LoadFolder(options.Folder);
 
-                // //If we want to build the module, build it
-                // if (options.Build) Build.ModuleBuilder.BuildFile(options.File);
+                var task = new ModuleTask(options).Start();
+
+                while (!task.IsCompleted) ;
+
+                if (!string.IsNullOrWhiteSpace(options.CopySTDToFolder)) STD.STDProvider.ProvideToFolder(options.CopySTDToFolder, "rust");
             });
         }
     }

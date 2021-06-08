@@ -9,7 +9,7 @@ const LIB_NAME: &str = "libmodule.dylib";
 const LIB_NAME: &str = "Module.dll";
 
 //Import any headers
-#[path = ".headers/cross_module.rs"]
+#[path = ".std/cross_module.rs"]
 pub mod cross_module;
 
 //And then importing everything

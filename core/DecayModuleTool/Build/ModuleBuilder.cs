@@ -15,24 +15,17 @@ namespace DecayModuleTool.Build
             Windows = "Module.dll"
         };
 
-        public static Task BuildFileAsync(string file)
+        public static void BuildModule(string module, string collectDir)
         {
-            return Task.Run(() => BuildFile(file));
-        }
+            Console.WriteLine($"Started build on module {module}");
 
-        public static void BuildFile(string file)
-        {
-            Console.WriteLine($"Started build on file {file}");
-
-            //If the file has no extension, it prob has a .dmod extension irl
-            if (!Path.HasExtension(file)) file = file + ".dmod";
+            string file = ModuleList.ModuleList.Instance.GetModuleFile(module);
 
             //Make sure we have a valid file
             if (File.Exists(file))
             {
-                //Read the file's text and parse it
-                string text = File.ReadAllText(file);
-                ModuleFile dmod = JsonConvert.DeserializeObject<ModuleFile>(text);
+                //Load the module
+                var dmod = ModuleFile.LoadModule(module);
 
                 //Get the path of the module
                 var modulePath = Path.GetDirectoryName(file);
@@ -54,11 +47,28 @@ namespace DecayModuleTool.Build
                 //Copy the file from wherever the output normally would be from the compiler to the proper output
                 File.Copy(targetFile, destFile);
 
-                Console.WriteLine($"Finished build on file {file}");
+                //If we are collecting all binaries to a folder, collect it now
+                if (!string.IsNullOrWhiteSpace(collectDir))
+                {
+                    collectDir = Path.GetFullPath(collectDir);
+
+                    Console.WriteLine($"Putting module lib into the collect folder {collectDir}...");
+
+                    string destCollectDir = Path.Combine(collectDir, dmod.Name);
+                    string destCollectFile = Path.Combine(destCollectDir, LibName.Get());
+                    if (!Directory.Exists(destCollectDir)) Directory.CreateDirectory(destCollectDir);
+                    if (File.Exists(destCollectFile)) File.Delete(destCollectFile);
+
+                    File.Copy(destFile, destCollectFile);
+
+                    Console.WriteLine("Put module lib into the collect folder.");
+                }
+
+                Console.WriteLine($"Finished build on Module {module}");
             }
             else
             {
-                throw new FileNotFoundException("Couldn't find file", file);
+                throw new FileNotFoundException("Couldn't find module file", file);
             }
         }
 

@@ -1,5 +1,5 @@
 [package]
-name = "decay_core"
+name = "decay_desktop"
 version = "0.1.0"
 authors = ["Mcp613 <40151628+Fullbrik@users.noreply.github.com>"]
 edition = "2018"

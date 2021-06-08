@@ -19,10 +19,14 @@ namespace DecayModuleTool.ModuleList
             {
                 //Next, search all directories for modules, including sub-folders
                 ProbeFolder(folder, list);
-            }
 
-            //And write it into .dmodlist
-            File.WriteAllText(Path.Combine(folder, ".dmodlist"), list.ToString());
+                //And write it into .dmodlist
+                File.WriteAllText(Path.Combine(folder, ".dmodlist"), list.ToString());
+            }
+            else
+            {
+                throw new Exception($"Couldn't find modules directory \"{folder}\"");
+            }
         }
 
         private static void ProbeFolder(string folder, ModuleList list)
@@ -36,7 +40,8 @@ namespace DecayModuleTool.ModuleList
                 string text = File.ReadAllText(Path.Combine(folder, "module.dmod"));
                 var dmod = JsonConvert.DeserializeObject<ModuleFile>(text);
 
-                list.Add(folder, dmod.Name);
+                //Add it to the list
+                list.Add(dmod.Name, Path.GetFullPath(folder));
             }
             else
             {

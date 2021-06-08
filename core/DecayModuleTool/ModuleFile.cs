@@ -1,12 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
+using DecayModuleTool.ModuleList;
+using Newtonsoft.Json;
 
 namespace DecayModuleTool
 {
     [Serializable]
     public class ModuleFile
     {
+        private static Dictionary<string, ModuleFile> ModuleFileCache { get; } = new Dictionary<string, ModuleFile>();
+
+        public static ModuleFile LoadModule(string module)
+        {
+            if (ModuleFileCache.ContainsKey(module))
+            {
+                return ModuleFileCache[module];
+            }
+            else
+            {
+                string file = ModuleList.ModuleList.Instance.GetModuleFile(module);
+
+                if (File.Exists(file))
+                {
+                    //Read the file's text and parse it
+                    string text = File.ReadAllText(file);
+                    ModuleFile dmod = JsonConvert.DeserializeObject<ModuleFile>(text);
+
+                    //Add it to the cache
+                    ModuleFileCache.Add(module, dmod);
+
+                    //And return it
+                    return dmod;
+                }
+                else
+                {
+                    throw new FileNotFoundException($"Couldn't get module file for module {module}", file);
+                }
+            }
+        }
+
         public string Name { get; set; }
         public Dictionary<string, string> Folders { get; set; } = new Dictionary<string, string>();
         public string Lang { get; set; }
@@ -14,7 +48,7 @@ namespace DecayModuleTool
         public PlatformDependantModuleConfig PreBuild { get; set; }
         public string Build { get; set; }
         public PlatformDependantModuleConfig Output { get; set; }
-        public string Deps { get; set; }
+        public string[] Deps { get; set; }
     }
 
     [Serializable]

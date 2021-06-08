@@ -25,7 +25,7 @@ fn main() {
     //Create the Module manager
     let mut manager = ModuleManager::new();
     //And add all our paths from the module.json file and load it. Make sure you added the $DECAY environment variable
-    manager.add_modules_from_json(include_str!("../modules.json"), true);
+    //manager.add_modules_from_json(include_str!("../modules.json"), true);
 
     //We've loaded all our initial modules, so we call this
     manager.complete_load_initial_modules();

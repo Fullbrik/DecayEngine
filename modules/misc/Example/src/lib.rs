@@ -1,9 +1,9 @@
-#[path = ".headers/cross_module.rs"]
+#[path = ".std/cross_module.rs"]
 pub mod cross_module;
 
 use cross_module::Packet;
-use std::{ffi::CStr, mem};
 use std::os::raw::c_char;
+use std::{ffi::CStr, mem};
 
 const MODULE_NAME: &str = "Example";
 
