@@ -1,7 +1,8 @@
 decay-engine:
 	# Clean up first
-	rm -rf ./core/platforms/desktop/target
-	rm ./core/platforms/desktop/Cargo.lock
+	rm -rf ./core/platforms/desktop/target fi || true
+
+	rm ./core/platforms/desktop/Cargo.lock || true
 
 	# Copy the engine into the engine folder
 	mkdir -p engine
